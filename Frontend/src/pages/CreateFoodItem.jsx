@@ -12,11 +12,34 @@ const CreateFoodItem = () => {
     const [fiber, setFiber] = useState('');
     const [fat, setFat] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // TODO: API integration will be added by the user
-        console.log('Food item submitted:', { itemName, calories, protein, fiber, fat });
-        alert('Food item created (UI only — no API connected yet)');
+        //console.log('Food item submitted:', { itemName, calories, protein, fiber, fat });
+        //alert('Food item created (UI only — no API connected yet)');
+        try {
+            const response = await fetch("http://localhost:3000/user/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    itemName,
+                    calories,
+                    protein,
+                    fiber,
+                    fat
+                })
+            })
+            const data = await response.json();
+            if (response.ok) {
+                console.log(data.foodItem);
+                alert("added")
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -62,8 +85,8 @@ const CreateFoodItem = () => {
                     <button
                         onClick={() => setActiveTab('manual')}
                         className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${activeTab === 'manual'
-                                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
-                                : 'text-purple-300/70 hover:text-white hover:bg-white/5'
+                            ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
+                            : 'text-purple-300/70 hover:text-white hover:bg-white/5'
                             }`}
                     >
                         ✏️ Manual Entry
@@ -71,8 +94,8 @@ const CreateFoodItem = () => {
                     <button
                         onClick={() => setActiveTab('ai')}
                         className={`flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${activeTab === 'ai'
-                                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
-                                : 'text-purple-300/70 hover:text-white hover:bg-white/5'
+                            ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
+                            : 'text-purple-300/70 hover:text-white hover:bg-white/5'
                             }`}
                     >
                         🤖 AI Entry

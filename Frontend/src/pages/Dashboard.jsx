@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 const Dashboard = () => {
   const navigate = useNavigate();
-
+  const [foodItems, setFoodItems] = useState([]);
+  const [totals, setTotals] = useState({
+    calories: 0,
+    protein: 0,
+    fat: 0,
+    fiber: 0
+  });
+  useEffect(() => {
+    const fetchFoodItems = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/user/dashboard', {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include"
+        });
+        const data = await response.json();
+        setFoodItems(data.foodItems);
+        setTotals(data.totals);
+      } catch (error) {
+        console.error('Error fetching food items:', error);
+      }
+    };
+    fetchFoodItems();
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950">
       {/* Header */}
@@ -65,10 +89,10 @@ const Dashboard = () => {
         {/* Stats Cards Placeholder */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
           {[
-            { label: 'Total Items', value: '—', icon: '📦', color: 'from-indigo-500/20 to-indigo-600/10', border: 'border-indigo-500/20' },
-            { label: 'Total Calories', value: '—', icon: '🔥', color: 'from-orange-500/20 to-orange-600/10', border: 'border-orange-500/20' },
-            { label: 'Avg Protein', value: '—', icon: '💪', color: 'from-emerald-500/20 to-emerald-600/10', border: 'border-emerald-500/20' },
-            { label: 'Avg Fat', value: '—', icon: '🥑', color: 'from-purple-500/20 to-purple-600/10', border: 'border-purple-500/20' },
+            { label: 'Total Items', value: foodItems.length, icon: '📦', color: 'from-indigo-500/20 to-indigo-600/10', border: 'border-indigo-500/20' },
+            { label: 'Total Calories', value: totals.calories, icon: '🔥', color: 'from-orange-500/20 to-orange-600/10', border: 'border-orange-500/20' },
+            { label: 'Total Protein', value: totals.protein, icon: '💪', color: 'from-emerald-500/20 to-emerald-600/10', border: 'border-emerald-500/20' },
+            { label: 'Total Fat', value: totals.fat, icon: '🥑', color: 'from-purple-500/20 to-purple-600/10', border: 'border-purple-500/20' },
           ].map((stat) => (
             <div
               key={stat.label}

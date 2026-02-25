@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [foodItems, setFoodItems] = useState([]);
   const [totals, setTotals] = useState({
     calories: 0,
@@ -70,6 +71,62 @@ const Dashboard = () => {
               </svg>
               Upload Image
             </button>
+
+            {/* Profile Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setShowProfileMenu(true)}
+              onMouseLeave={() => setShowProfileMenu(false)}
+            >
+              <button className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center cursor-pointer transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 hover:scale-105 border-2 border-white/20">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </button>
+
+              {/* Dropdown Menu */}
+              {showProfileMenu && (
+                <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-white/10 bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-purple-900/30 overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
+                  <div className="p-1.5">
+                    <button
+                      onClick={() => navigate('/calorie-calculator')}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-white/10 cursor-pointer group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/20 flex items-center justify-center">
+                        <span className="text-sm">🔥</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-purple-100 group-hover:text-white">Daily Calories</p>
+                        <p className="text-xs text-purple-400/60">Calculate your deficit</p>
+                      </div>
+                    </button>
+
+                    <div className="mx-3 my-1 border-t border-white/5"></div>
+
+                    <button
+                      onClick={() => {
+                        // TODO: Add your own logout logic here
+                        console.log('Logout clicked');
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-red-500/10 cursor-pointer group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500/20 to-rose-500/20 border border-red-500/20 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                          <polyline points="16 17 21 12 16 7" />
+                          <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-red-300 group-hover:text-red-200">Logout</p>
+                        <p className="text-xs text-red-400/50">Sign out of your account</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>

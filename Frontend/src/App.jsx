@@ -5,6 +5,7 @@ import React from "react";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import CreateFoodItem from "./pages/CreateFoodItem";
+import CalorieCalculator from "./pages/CalorieCalculator";
 function App() {
 
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/create-food-item" element={<CreateFoodItem />} />
+      <Route path="/calorie-calculator" element={<CalorieCalculator />} />
     </Routes>
   )
 }

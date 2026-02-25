@@ -10,6 +10,19 @@ const Dashboard = () => {
     fat: 0,
     fiber: 0
   });
+  const handleLogout=async()=>{
+    const response=await fetch("http://localhost:3000/api/auth/user/logout",{
+      method:"POST",
+      credentials:"include",
+      headers:{
+        "Content-Type":"application/json"
+      }
+    })
+    const data=await response.json();
+    if(response.ok){
+      navigate("/login");
+    }
+  }
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
@@ -87,42 +100,41 @@ const Dashboard = () => {
 
               {/* Dropdown Menu */}
               {showProfileMenu && (
-                <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-white/10 bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-purple-900/30 overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
-                  <div className="p-1.5">
-                    <button
-                      onClick={() => navigate('/calorie-calculator')}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-white/10 cursor-pointer group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/20 flex items-center justify-center">
-                        <span className="text-sm">🔥</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-purple-100 group-hover:text-white">Daily Calories</p>
-                        <p className="text-xs text-purple-400/60">Calculate your deficit</p>
-                      </div>
-                    </button>
+                <div className="absolute right-0 top-full pt-2 w-56 z-50">
+                  <div className="rounded-xl border border-white/10 bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-purple-900/30 overflow-hidden">
+                    <div className="p-1.5">
+                      <button
+                        onClick={() => navigate('/calorie-calculator')}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-white/10 cursor-pointer group"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/20 flex items-center justify-center">
+                          <span className="text-sm">🔥</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-purple-100 group-hover:text-white">Daily Calories</p>
+                          <p className="text-xs text-purple-400/60">Calculate your deficit</p>
+                        </div>
+                      </button>
 
-                    <div className="mx-3 my-1 border-t border-white/5"></div>
+                      <div className="mx-3 my-1 border-t border-white/5"></div>
 
-                    <button
-                      onClick={() => {
-                        // TODO: Add your own logout logic here
-                        console.log('Logout clicked');
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-red-500/10 cursor-pointer group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500/20 to-rose-500/20 border border-red-500/20 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                          <polyline points="16 17 21 12 16 7" />
-                          <line x1="21" y1="12" x2="9" y2="12" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-red-300 group-hover:text-red-200">Logout</p>
-                        <p className="text-xs text-red-400/50">Sign out of your account</p>
-                      </div>
-                    </button>
+                      <button
+                        onClick={handleLogout}  
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-red-500/10 cursor-pointer group"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500/20 to-rose-500/20 border border-red-500/20 flex items-center justify-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-red-300 group-hover:text-red-200">Logout</p>
+                          <p className="text-xs text-red-400/50">Sign out of your account</p>
+                        </div>
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

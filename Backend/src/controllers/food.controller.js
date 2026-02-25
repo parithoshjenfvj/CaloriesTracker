@@ -18,8 +18,13 @@ async function createFoodItem(req, res) {
 
 async function getFoodItems(req,res){
     try{
+        const today=new Date();
+        today.setHours(0,0,0,0);
+        const tomorrow=new Date(today);
+        tomorrow.setDate(today.getDate()+1);
         const foodItems=await foodModel.find({
-        userId:req.user._id
+            userId:req.user._id,
+            createdAt:{$gte:today,$lt:tomorrow}
         })
         let totalCalories = 0;
         let totalProtein = 0;

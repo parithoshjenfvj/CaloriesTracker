@@ -23,7 +23,13 @@ const foodSchema = new mongoose.Schema({
     fiber: {
         type: Number,
         required: true
-    }
+    },
+    createdAt: {
+    type: Date,
+    default: Date.now
+  }
+},{
+    timestamps:true
 })
 
 const foodModel = mongoose.model("food", foodSchema);

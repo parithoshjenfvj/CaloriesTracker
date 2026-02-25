@@ -6,11 +6,12 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import CreateFoodItem from "./pages/CreateFoodItem";
 import CalorieCalculator from "./pages/CalorieCalculator";
+import Home from "./pages/Home";
 function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard />} />

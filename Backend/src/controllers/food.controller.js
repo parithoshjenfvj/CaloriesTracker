@@ -49,7 +49,27 @@ async function getFoodItems(req,res){
         res.status(500).json({ message: "Error loading dashboard" });
     }
 }
+
+
+async function getRecentFoodItems(req,res){
+    try{
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        today.setHours(0,0,0,0);
+        const foodItems=await foodModel.find({
+            userId:req.user._id,
+            createdAt:{$gte:yesterday,$lt:today}
+        })
+        res.status(200).json({
+            foodItems
+        });
+    }catch(error){
+        res.status(500).json({ message: "Error loading recents tab" });
+    }
+}
 module.exports = {
     createFoodItem,
-    getFoodItems
+    getFoodItems,
+    getRecentFoodItems
 }

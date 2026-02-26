@@ -9,6 +9,57 @@ const Home = () => {
     const [proteinCount, setProteinCount] = useState(0);
     const [mealsCount, setMealsCount] = useState(0);
 
+    // Feedback form state
+    const [feedbackEmail, setFeedbackEmail] = useState('');
+    const [feedbackText, setFeedbackText] = useState('');
+    const [feedbackRating, setFeedbackRating] = useState(0);
+    const [feedbackHoverRating, setFeedbackHoverRating] = useState(0);
+    const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+    const [feedbackErrors, setFeedbackErrors] = useState({});
+
+    const handleFeedbackSubmit = async (e) => {
+        e.preventDefault();
+        const errors = {};
+        if (!feedbackEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(feedbackEmail)) {
+            errors.email = 'Please enter a valid email address';
+        }
+        if (!feedbackText.trim()) {
+            errors.feedback = 'Please enter your feedback';
+        }
+        if (feedbackRating === 0) {
+            errors.rating = 'Please select a rating';
+        }
+        if (Object.keys(errors).length > 0) {
+            setFeedbackErrors(errors);
+            return;
+        }
+        setFeedbackErrors({});
+        try {
+            const res = await fetch('http://localhost:3000/user/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: feedbackEmail,
+                    feedback: feedbackText,
+                    rating: feedbackRating,
+                }),
+            });
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.message || 'Something went wrong');
+            }
+            setFeedbackSubmitted(true);
+            setTimeout(() => {
+                setFeedbackSubmitted(false);
+                setFeedbackEmail('');
+                setFeedbackText('');
+                setFeedbackRating(0);
+            }, 3000);
+        } catch (err) {
+            setFeedbackErrors({ submit: err.message || 'Failed to submit feedback. Please try again.' });
+        }
+    };
+
     useEffect(() => {
         setIsVisible(true);
 
@@ -320,8 +371,8 @@ const Home = () => {
                             key={i}
                             onClick={() => setActiveFeature(i)}
                             className={`relative rounded-2xl border p-6 cursor-pointer transition-all duration-500 group ${activeFeature === i
-                                    ? `bg-gradient-to-br ${feature.bg} ${feature.border} shadow-xl scale-[1.03]`
-                                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02]'
+                                ? `bg-gradient-to-br ${feature.bg} ${feature.border} shadow-xl scale-[1.03]`
+                                : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02]'
                                 }`}
                         >
                             <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.bg} border ${feature.border} flex items-center justify-center mb-4 transition-transform duration-500 ${activeFeature === i ? 'scale-110 rotate-3' : 'group-hover:scale-105'}`}>
@@ -468,6 +519,151 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Feedback Section */}
+            <section className="max-w-7xl mx-auto px-6 py-24">
+                <div className="relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm p-10 md:p-14 overflow-hidden">
+                    {/* Background glow */}
+                    <div className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full bg-cyan-600/8 blur-[100px]" />
+                    <div className="absolute -bottom-20 -left-20 w-[250px] h-[250px] rounded-full bg-indigo-600/8 blur-[100px]" />
+
+                    <div className="relative z-10">
+                        <div className="text-center mb-10">
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-5">
+                                <span className="text-xs font-semibold text-cyan-300 tracking-wide uppercase">We Value Your Opinion</span>
+                            </div>
+                            <h3 className="text-4xl font-black text-white mb-4 tracking-tight">
+                                Share Your{' '}
+                                <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                                    Feedback
+                                </span>
+                            </h3>
+                            <p className="text-purple-300/60 text-lg max-w-xl mx-auto">
+                                Help us improve your experience. Drop us your thoughts and rate our app!
+                            </p>
+                        </div>
+
+                        {feedbackSubmitted ? (
+                            <div className="flex flex-col items-center justify-center py-12 animate-[fadeIn_0.5s_ease-out]">
+                                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/30 animate-[bounceIn_0.6s_ease-out]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                </div>
+                                <h4 className="text-2xl font-bold text-white mb-2">Thank You!</h4>
+                                <p className="text-purple-300/60 text-sm">Your feedback has been received. We appreciate your input!</p>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleFeedbackSubmit} className="max-w-2xl mx-auto space-y-6">
+                                {/* Email */}
+                                <div>
+                                    <label htmlFor="feedback-email" className="block text-sm font-semibold text-purple-200 mb-2">
+                                        Email Address
+                                    </label>
+                                    <input
+                                        id="feedback-email"
+                                        type="email"
+                                        value={feedbackEmail}
+                                        onChange={(e) => { setFeedbackEmail(e.target.value); setFeedbackErrors(prev => ({ ...prev, email: undefined })); }}
+                                        placeholder="your@email.com"
+                                        className="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-purple-400/40 outline-none transition-all duration-300 focus:border-cyan-500/50 focus:bg-white/10 focus:shadow-lg focus:shadow-cyan-500/10 text-sm"
+                                    />
+                                    {feedbackErrors.email && (
+                                        <p className="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                                            <span>⚠️</span> {feedbackErrors.email}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Feedback Text */}
+                                <div>
+                                    <label htmlFor="feedback-text" className="block text-sm font-semibold text-purple-200 mb-2">
+                                        Your Feedback
+                                    </label>
+                                    <textarea
+                                        id="feedback-text"
+                                        rows={4}
+                                        value={feedbackText}
+                                        onChange={(e) => { setFeedbackText(e.target.value); setFeedbackErrors(prev => ({ ...prev, feedback: undefined })); }}
+                                        placeholder="Tell us what you love or what we can improve..."
+                                        className="w-full px-5 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-purple-400/40 outline-none transition-all duration-300 focus:border-cyan-500/50 focus:bg-white/10 focus:shadow-lg focus:shadow-cyan-500/10 text-sm resize-none"
+                                    />
+                                    {feedbackErrors.feedback && (
+                                        <p className="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                                            <span>⚠️</span> {feedbackErrors.feedback}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Rating */}
+                                <div>
+                                    <label className="block text-sm font-semibold text-purple-200 mb-3">
+                                        Rating <span className="text-purple-400/50 font-normal">(1 - 10)</span>
+                                    </label>
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                                            const isActive = num <= (feedbackHoverRating || feedbackRating);
+                                            const gradient = num <= 3
+                                                ? 'from-red-500 to-orange-500'
+                                                : num <= 6
+                                                    ? 'from-yellow-500 to-amber-500'
+                                                    : num <= 8
+                                                        ? 'from-emerald-500 to-teal-500'
+                                                        : 'from-cyan-400 to-blue-500';
+                                            return (
+                                                <button
+                                                    key={num}
+                                                    type="button"
+                                                    onClick={() => { setFeedbackRating(num); setFeedbackErrors(prev => ({ ...prev, rating: undefined })); }}
+                                                    onMouseEnter={() => setFeedbackHoverRating(num)}
+                                                    onMouseLeave={() => setFeedbackHoverRating(0)}
+                                                    className={`w-10 h-10 rounded-xl font-bold text-sm cursor-pointer transition-all duration-300 border ${isActive
+                                                        ? `bg-gradient-to-br ${gradient} border-transparent text-white shadow-lg scale-110`
+                                                        : 'bg-white/5 border-white/10 text-purple-400/60 hover:bg-white/10 hover:border-white/20'
+                                                        }`}
+                                                >
+                                                    {num}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                    {feedbackRating > 0 && (
+                                        <p className="mt-2 text-xs text-purple-300/50">
+                                            {feedbackRating <= 3 ? '😔 We can do better!' : feedbackRating <= 6 ? '🙂 Good, but room to grow!' : feedbackRating <= 8 ? '😊 Glad you like it!' : '🤩 Amazing! Thank you!'}
+                                        </p>
+                                    )}
+                                    {feedbackErrors.rating && (
+                                        <p className="mt-1.5 text-xs text-red-400 flex items-center gap-1">
+                                            <span>⚠️</span> {feedbackErrors.rating}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Submit Error */}
+                                {feedbackErrors.submit && (
+                                    <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400 flex items-center gap-2">
+                                        <span>⚠️</span> {feedbackErrors.submit}
+                                    </div>
+                                )}
+
+                                {/* Submit */}
+                                <div className="pt-2">
+                                    <button
+                                        type="submit"
+                                        className="group w-full px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-xl cursor-pointer transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-2xl hover:shadow-cyan-500/40 hover:-translate-y-1 active:translate-y-0 text-base flex items-center justify-center gap-2"
+                                    >
+                                        Submit Feedback
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <line x1="22" y1="2" x2="11" y2="13" />
+                                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            </section>
+
             {/* Footer */}
             <footer className="border-t border-white/5 bg-slate-950/50">
                 <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -490,6 +686,16 @@ const Home = () => {
         @keyframes float {
           0%, 100% { transform: translateY(0px) scale(1); opacity: 0.3; }
           50% { transform: translateY(-30px) scale(1.5); opacity: 0.6; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounceIn {
+          0% { transform: scale(0.3); opacity: 0; }
+          50% { transform: scale(1.1); }
+          70% { transform: scale(0.95); }
+          100% { transform: scale(1); opacity: 1; }
         }
       `}</style>
         </div>

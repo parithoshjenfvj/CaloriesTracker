@@ -13,36 +13,36 @@ const Dashboard = () => {
   const [addedItems, setAddedItems] = useState({});
 
 
-  const [recentItems,setRecentItems]=useState([]);
-  useEffect(()=>{
-    const fetchRecentItems=async()=>{
-      try{
-        const response=await fetch("http://localhost:3000/user/recents",{
-          method:"GET",
-          headers:{
-            "content-type":"application/json"
+  const [recentItems, setRecentItems] = useState([]);
+  useEffect(() => {
+    const fetchRecentItems = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/user/recents", {
+          method: "GET",
+          headers: {
+            "content-type": "application/json"
           },
-          credentials:"include"
+          credentials: "include"
         })
-        const data=await response.json();
+        const data = await response.json();
         setRecentItems(data.foodItems);
-      }catch(error){
+      } catch (error) {
         console.log(error);
       }
     }
     fetchRecentItems();
-  },[])
+  }, [])
 
-  const handleAddRecentItem = async(item) => {
-    const response=await fetch("http://localhost:3000/user/add-recent/"+item._id,{
-      method:"POST",
-      headers:{
-        "content-type":"application/json"
+  const handleAddRecentItem = async (item) => {
+    const response = await fetch("http://localhost:3000/user/add-recent/" + item._id, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
       },
-      credentials:"include"
+      credentials: "include"
     })
-    const data=await response.json();
-    if(response.ok){
+    const data = await response.json();
+    if (response.ok) {
       const newItem = data.recentItem;
       setFoodItems(prev => [...prev, newItem]);
       setTotals(prev => ({
@@ -50,7 +50,7 @@ const Dashboard = () => {
         protein: prev.protein + newItem.protein,
         fat: prev.fat + newItem.fat,
         fiber: prev.fiber + newItem.fiber
-    }));
+      }));
     }
     setAddedItems(prev => ({ ...prev, [item._id]: true }));
     setTimeout(() => {
@@ -169,6 +169,19 @@ const Dashboard = () => {
                         </div>
                       </button>
 
+                      <button
+                        onClick={() => navigate('/monthly-summary')}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-white/10 cursor-pointer group"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 border border-indigo-500/20 flex items-center justify-center">
+                          <span className="text-sm">📊</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-purple-100 group-hover:text-white">Monthly Summary</p>
+                          <p className="text-xs text-purple-400/60">View your monthly stats</p>
+                        </div>
+                      </button>
+
                       <div className="mx-3 my-1 border-t border-white/5"></div>
 
                       <button
@@ -276,8 +289,8 @@ const Dashboard = () => {
                   <button
                     onClick={() => handleAddRecentItem(item)}
                     className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all duration-300 ${addedItems[item._id]
-                        ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 shadow-lg shadow-emerald-500/10'
-                        : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0'
+                      ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 shadow-lg shadow-emerald-500/10'
+                      : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0'
                       }`}
                     disabled={addedItems[item._id]}
                   >

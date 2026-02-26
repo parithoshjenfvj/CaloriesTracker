@@ -91,9 +91,46 @@ async function addRecentItem(req,res){
         return res.status(500).json({ message: "Error adding recent item" });
     }
 }
+
+async function getMonthlySummary(req,res){
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    const summary = await foodModel.aggregate([
+        {
+            $match: {
+                userId: req.user._id,
+                createdAt: { $gte: startOfMonth, $lt: startOfNextMonth }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    $dateToString: {
+                        format: "%Y-%m-%d",
+                        date: "$createdAt"
+                    }
+                },
+                totalCalories: { $sum: "$calories" },
+                totalProtein: { $sum: "$protein" },
+                totalFat: { $sum: "$fat" },
+                totalFiber: { $sum: "$fiber" }
+            }
+        },
+        {
+            $sort: {
+                _id: 1
+            }
+        }
+    ]);
+
+    res.status(200).json({ summary });
+}
 module.exports = {
     createFoodItem,
     getFoodItems,
     getRecentFoodItems,
-    addRecentItem
+    addRecentItem,
+    getMonthlySummary
 }

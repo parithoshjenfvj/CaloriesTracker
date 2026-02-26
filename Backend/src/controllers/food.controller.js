@@ -54,9 +54,9 @@ async function getFoodItems(req,res){
 async function getRecentFoodItems(req,res){
     try{
         const today = new Date();
+        today.setHours(0,0,0,0);
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
-        today.setHours(0,0,0,0);
         const foodItems=await foodModel.find({
             userId:req.user._id,
             createdAt:{$gte:yesterday,$lt:today}

@@ -68,8 +68,32 @@ async function getRecentFoodItems(req,res){
         res.status(500).json({ message: "Error loading recents tab" });
     }
 }
+
+async function addRecentItem(req,res){
+    try{
+        const foodItem=await foodModel.findById(req.params.id);
+        if(!foodItem){
+            return res.status(404).json({ message: "Food item not found" });
+        }
+        const recentItem=await foodModel.create({
+            userId:req.user._id,
+            itemName:foodItem.itemName,
+            calories:foodItem.calories,
+            protein:foodItem.protein,
+            fat:foodItem.fat,
+            fiber:foodItem.fiber
+        })
+        res.status(201).json({
+            message:"recent item added",
+            recentItem
+        })
+    }catch(error){
+        return res.status(500).json({ message: "Error adding recent item" });
+    }
+}
 module.exports = {
     createFoodItem,
     getFoodItems,
-    getRecentFoodItems
+    getRecentFoodItems,
+    addRecentItem
 }

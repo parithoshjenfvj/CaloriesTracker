@@ -10,19 +10,70 @@ const Dashboard = () => {
     fat: 0,
     fiber: 0
   });
-  const handleLogout=async()=>{
-    const response=await fetch("http://localhost:3000/api/auth/user/logout",{
-      method:"POST",
-      credentials:"include",
-      headers:{
-        "Content-Type":"application/json"
+  const [addedItems, setAddedItems] = useState({});
+
+
+  const [recentItems,setRecentItems]=useState([]);
+  useEffect(()=>{
+    const fetchRecentItems=async()=>{
+      try{
+        const response=await fetch("http://localhost:3000/user/recents",{
+          method:"GET",
+          headers:{
+            "content-type":"application/json"
+          },
+          credentials:"include"
+        })
+        const data=await response.json();
+        setRecentItems(data.foodItems);
+      }catch(error){
+        console.log(error);
       }
+    }
+    fetchRecentItems();
+  },[])
+
+  const handleAddRecentItem = async(item) => {
+    const response=await fetch("http://localhost:3000/user/add-recent/"+item._id,{
+      method:"POST",
+      headers:{
+        "content-type":"application/json"
+      },
+      credentials:"include"
     })
     const data=await response.json();
     if(response.ok){
+      const newItem = data.recentItem;
+      setFoodItems(prev => [...prev, newItem]);
+      setTotals(prev => ({
+        calories: prev.calories + newItem.calories,
+        protein: prev.protein + newItem.protein,
+        fat: prev.fat + newItem.fat,
+        fiber: prev.fiber + newItem.fiber
+    }));
+    }
+    setAddedItems(prev => ({ ...prev, [item._id]: true }));
+    setTimeout(() => {
+      setAddedItems(prev => ({ ...prev, [item._id]: false }));
+    }, 2000);
+  };
+
+
+  const handleLogout = async () => {
+    const response = await fetch("http://localhost:3000/api/auth/user/logout", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    const data = await response.json();
+    if (response.ok) {
       navigate("/login");
     }
   }
+
+
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
@@ -42,6 +93,8 @@ const Dashboard = () => {
     };
     fetchFoodItems();
   }, []);
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950">
       {/* Header */}
@@ -119,7 +172,7 @@ const Dashboard = () => {
                       <div className="mx-3 my-1 border-t border-white/5"></div>
 
                       <button
-                        onClick={handleLogout}  
+                        onClick={handleLogout}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-red-500/10 cursor-pointer group"
                       >
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500/20 to-rose-500/20 border border-red-500/20 flex items-center justify-center">
@@ -176,30 +229,99 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {/* Empty State - Food Items Table */}
+        {/* Recent Food Items */}
         <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">Recent Food Items</h3>
-          </div>
-          <div className="flex flex-col items-center justify-center py-20 px-6">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mb-5">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-9 h-9 text-purple-400/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
               </svg>
-            </div>
-            <p className="text-white/80 text-lg font-medium mb-2">No food items yet</p>
-            <p className="text-purple-300/50 text-sm mb-6 text-center max-w-sm">
-              Start by creating your first food item to begin tracking your nutrition.
-            </p>
-            <button
-              onClick={() => navigate('/create-food-item')}
-              className="px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-xl cursor-pointer transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 hover:-translate-y-0.5"
-            >
-              Create Your First Item
-            </button>
+              Recent Food Items
+            </h3>
+            <span className="text-xs font-medium text-purple-400/60 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/15">
+              Yesterday
+            </span>
           </div>
+
+          {recentItems.length > 0 ? (
+            <div className="divide-y divide-white/5">
+              {recentItems.map((item) => (
+                <div
+                  key={item._id}
+                  className="group px-6 py-4 flex items-center justify-between gap-4 transition-all duration-300 hover:bg-white/[0.03]"
+                >
+                  {/* Item Info */}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold text-white truncate mb-2 group-hover:text-purple-100 transition-colors">
+                      {item.itemName}
+                    </h4>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-300/80 bg-orange-500/10 px-2.5 py-1 rounded-lg border border-orange-500/10">
+                        🔥 {item.calories} cal
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-300/80 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/10">
+                        💪 {item.protein}g
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-purple-300/80 bg-purple-500/10 px-2.5 py-1 rounded-lg border border-purple-500/10">
+                        🥑 {item.fat}g
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-green-300/80 bg-green-500/10 px-2.5 py-1 rounded-lg border border-green-500/10">
+                        🌿 {item.fiber}g
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Add Button */}
+                  <button
+                    onClick={() => handleAddRecentItem(item)}
+                    className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all duration-300 ${addedItems[item._id]
+                        ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 shadow-lg shadow-emerald-500/10'
+                        : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0'
+                      }`}
+                    disabled={addedItems[item._id]}
+                  >
+                    {addedItems[item._id] ? (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Added
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="12" y1="5" x2="12" y2="19" />
+                          <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Add
+                      </>
+                    )}
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 px-6">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mb-5">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-9 h-9 text-purple-400/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
+                </svg>
+              </div>
+              <p className="text-white/80 text-lg font-medium mb-2">No recent items</p>
+              <p className="text-purple-300/50 text-sm mb-6 text-center max-w-sm">
+                No food items from yesterday. Start tracking to see your recent items here.
+              </p>
+              <button
+                onClick={() => navigate('/create-food-item')}
+                className="px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-xl cursor-pointer transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 hover:-translate-y-0.5"
+              >
+                Create Your First Item
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </div>

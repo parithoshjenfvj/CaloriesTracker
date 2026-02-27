@@ -9,7 +9,6 @@ const feedbackRoute=require("./routes/feedback.routes");
 const getFoodRouts=require("./routes/getfood.today.route");
 const cors = require("cors");
 
-const cors = require("cors");
 
 app.use(cors({
   origin: [

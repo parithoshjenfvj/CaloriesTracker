@@ -1,6 +1,8 @@
 const express = require("express");
 const foodModel = require("../models/food.model");
 const callYourAI = require("../utils/ai");
+const uploadFile=require("../utils/image.service");
+const {v4:uuid}=require("uuid");
 async function createFoodItem(req, res) {
     let { itemName, calories, protein, fat, fiber } = req.body;
     let foodItem = await foodModel.create({
@@ -167,11 +169,54 @@ async function getAINutrition(req, res) {
     res.status(500).json({ message: "AI failed" });
   }
 }
+
+async function getImageNutrition(req,res){
+   try{
+        let file=req.file;
+        const fileUploadResult=await uploadFile(file.buffer,uuid());
+        const prompt=`
+        give nutrition info for the follwoin gimare url:
+        ${fileUploadResult.url}
+        respond strictly in the json format as mentioned below
+        {
+        "itemName": string,
+        "calories": number,
+        "protein": number,
+        "fat": number,
+        "fiber": number
+        }
+        if the image is not clear or not able to identify the food item or uploaded food item doesn't related to food just return number 0 for all the values in json format
+        `
+        const aiData = await callYourAI(
+            prompt,
+            file.buffer,
+            file.mimetype
+        );
+        if(aiData.calories===0 && aiData.protein===0 && aiData.fat===0 && aiData.fiber===0){
+            return res.status(400).json({ message: "AI failed" });
+        }
+        const foodItem=await foodModel.create({
+            userId:req.user._id,
+            itemName:aiData.itemName,
+            calories:aiData.calories,
+            protein:aiData.protein,
+            fat:aiData.fat,
+            fiber:aiData.fiber
+        })
+        res.status(201).json({
+            message:"food item created",
+            foodItem
+        })
+   }catch(error){
+    res.status(500).json({ message: "AI failed" });
+   }
+}
 module.exports = {
     createFoodItem,
     getFoodItems,
     getRecentFoodItems,
     addRecentItem,
     getMonthlySummary,
-    getAINutrition
+    getAINutrition,
+    getImageNutrition
 }

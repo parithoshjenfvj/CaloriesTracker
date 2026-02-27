@@ -8,6 +8,7 @@ import CreateFoodItem from "./pages/CreateFoodItem";
 import CalorieCalculator from "./pages/CalorieCalculator";
 import Home from "./pages/Home";
 import MonthlySummary from "./pages/MonthlySummary";
+import UploadImage from "./pages/UploadImage";
 function App() {
 
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route path="/create-food-item" element={<CreateFoodItem />} />
       <Route path="/calorie-calculator" element={<CalorieCalculator />} />
       <Route path="/monthly-summary" element={<MonthlySummary />} />
+      <Route path="/upload-image" element={<UploadImage />} />
     </Routes>
   )
 }

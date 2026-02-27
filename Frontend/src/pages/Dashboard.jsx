@@ -147,6 +147,7 @@ const Dashboard = () => {
             </button>
 
             <button
+              onClick={() => navigate('/upload-image')}
               className="group px-5 py-2.5 text-sm font-semibold rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2"
               style={{
                 background: 'var(--bg-card)',

@@ -9,7 +9,13 @@ const feedbackRoute=require("./routes/feedback.routes");
 const getFoodRouts=require("./routes/getfood.today.route");
 const cors = require("cors");
 
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(cors({
+  credentials: true,
+  origin: [
+    "http://localhost:5173",
+    "https://calories-tracker-pp7v.vercel.app"
+  ]
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

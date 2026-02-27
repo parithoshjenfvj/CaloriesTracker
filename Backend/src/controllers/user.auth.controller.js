@@ -19,7 +19,11 @@ async function userRegister(req,res){
     let token=jwt.sign({
         userId:user._id
     },process.env.JWT_SECRET)
-    res.cookie("token",token)
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,        // REQUIRED for HTTPS
+        sameSite: "None",    // REQUIRED for cross-domain
+    });
     res.status(201).json({
         message:"user created",
         user
@@ -43,7 +47,11 @@ async function userLogin(req,res){
         const token=jwt.sign({
             userId:user._id
         },process.env.JWT_SECRET);
-        res.cookie("token",token);
+        res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,        // REQUIRED for HTTPS
+        sameSite: "None",    // REQUIRED for cross-domain
+        });
         res.status(201).json({
             message:"user loggedIn successfully",
             user

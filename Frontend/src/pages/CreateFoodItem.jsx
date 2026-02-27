@@ -12,6 +12,35 @@ const CreateFoodItem = () => {
     const [focusedField, setFocusedField] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // AI Entry state
+    const [aiFoodName, setAiFoodName] = useState('');
+    const [aiQuantity, setAiQuantity] = useState('');
+    const [aiSubmitting, setAiSubmitting] = useState(false);
+
+    const handleAiSubmit = async (e) => {
+        e.preventDefault();
+        setAiSubmitting(true);
+        try {
+            // TODO: Add your API logic here
+            // Example payload: { foodName: aiFoodName, quantity: aiQuantity }
+            const response=await fetch("http://localhost:3000/user/get-ai-nutrition",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                credentials:"include",
+                body:JSON.stringify({foodName:aiFoodName,quantity:aiQuantity})
+            })
+            const data=await response.json();
+            if(response.ok){
+                console.log(data.foodItem);
+                alert("added");
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setAiSubmitting(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -204,18 +233,99 @@ const CreateFoodItem = () => {
                             </button>
                         </form>
                     ) : (
-                        <div className="flex flex-col items-center justify-center py-20 px-6 animate-fade-in-up">
-                            <div
-                                className="w-20 h-20 rounded-full flex items-center justify-center mb-5"
-                                style={{ background: 'var(--accent-teal-dim)' }}
-                            >
-                                <span className="text-4xl" style={{ animation: 'float 3s ease-in-out infinite' }}>🤖</span>
+                        <form onSubmit={handleAiSubmit} className="p-8 space-y-6 animate-fade-in-up">
+                            {/* AI Header */}
+                            <div className="flex items-center gap-3 mb-2">
+                                <div
+                                    className="w-12 h-12 rounded-full flex items-center justify-center"
+                                    style={{ background: 'var(--accent-teal-dim)' }}
+                                >
+                                    <span className="text-2xl" style={{ animation: 'float 3s ease-in-out infinite' }}>🤖</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>AI Food Detection</h3>
+                                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Enter the food name and quantity — AI will fetch the nutrition info.</p>
+                                </div>
                             </div>
-                            <h3 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>AI Entry</h3>
-                            <p className="text-sm text-center max-w-sm" style={{ color: 'var(--text-muted)' }}>
-                                AI-powered food detection coming soon. This feature will let you automatically identify food items and nutritional info.
-                            </p>
-                        </div>
+
+                            {/* Food Name */}
+                            <div className="flex flex-col gap-2">
+                                <label
+                                    htmlFor="aiFoodName"
+                                    className="text-xs font-semibold uppercase tracking-widest flex items-center gap-1.5 transition-colors duration-300"
+                                    style={{ color: focusedField === 'aiFoodName' ? 'var(--accent-teal)' : 'var(--text-secondary)' }}
+                                >
+                                    <span>🍽️</span> Food Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="aiFoodName"
+                                    value={aiFoodName}
+                                    onChange={(e) => setAiFoodName(e.target.value)}
+                                    onFocus={() => setFocusedField('aiFoodName')}
+                                    onBlur={() => setFocusedField(null)}
+                                    placeholder="e.g. Biryani"
+                                    className="px-4 py-3.5 rounded-xl text-sm transition-all duration-300 focus-glow"
+                                    style={{
+                                        background: 'var(--bg-elevated)',
+                                        border: `1px solid ${focusedField === 'aiFoodName' ? 'var(--accent-teal)' : 'var(--border-medium)'}`,
+                                        color: 'var(--text-primary)',
+                                        outline: 'none',
+                                    }}
+                                    required
+                                />
+                            </div>
+
+                            {/* Quantity */}
+                            <div className="flex flex-col gap-2">
+                                <label
+                                    htmlFor="aiQuantity"
+                                    className="text-xs font-semibold uppercase tracking-widest flex items-center gap-1.5 transition-colors duration-300"
+                                    style={{ color: focusedField === 'aiQuantity' ? 'var(--accent-amber)' : 'var(--text-secondary)' }}
+                                >
+                                    <span>⚖️</span> Quantity
+                                </label>
+                                <input
+                                    type="text"
+                                    id="aiQuantity"
+                                    value={aiQuantity}
+                                    onChange={(e) => setAiQuantity(e.target.value)}
+                                    onFocus={() => setFocusedField('aiQuantity')}
+                                    onBlur={() => setFocusedField(null)}
+                                    placeholder="e.g. 250gm"
+                                    className="px-4 py-3.5 rounded-xl text-sm transition-all duration-300 focus-glow"
+                                    style={{
+                                        background: 'var(--bg-elevated)',
+                                        border: `1px solid ${focusedField === 'aiQuantity' ? 'var(--accent-amber)' : 'var(--border-medium)'}`,
+                                        color: 'var(--text-primary)',
+                                        outline: 'none',
+                                    }}
+                                    required
+                                />
+                            </div>
+
+                            {/* Submit */}
+                            <button
+                                type="submit"
+                                disabled={aiSubmitting}
+                                className="w-full py-3.5 text-sm font-bold uppercase tracking-wide rounded-xl cursor-pointer transition-all duration-300 mt-2 btn-press flex items-center justify-center gap-2"
+                                style={{
+                                    background: 'linear-gradient(135deg, var(--accent-teal), #0d9488)',
+                                    color: '#fff',
+                                    boxShadow: '0 6px 20px rgba(20, 184, 166, 0.3)',
+                                }}
+                                onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 32px rgba(20,184,166,0.45)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 6px 20px rgba(20,184,166,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                            >
+                                {aiSubmitting ? (
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full" style={{ animation: 'spin 0.6s linear infinite' }} />
+                                ) : (
+                                    <>
+                                        <span>✨</span> Detect with AI
+                                    </>
+                                )}
+                            </button>
+                        </form>
                     )}
                 </div>
             </main>

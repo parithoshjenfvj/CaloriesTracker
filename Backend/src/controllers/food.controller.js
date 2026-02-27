@@ -1,5 +1,6 @@
 const express = require("express");
 const foodModel = require("../models/food.model");
+const callYourAI = require("../utils/ai");
 async function createFoodItem(req, res) {
     let { itemName, calories, protein, fat, fiber } = req.body;
     let foodItem = await foodModel.create({
@@ -127,10 +128,50 @@ async function getMonthlySummary(req,res){
 
     res.status(200).json({ summary });
 }
+
+async function getAINutrition(req, res) {
+  try {
+    const { foodName, quantity } = req.body;
+    if (!foodName || !quantity) {
+      return res.status(400).json({ message: "Missing fields" });
+    }
+    const prompt = `
+    Give nutrition values for:
+    Food: ${foodName}
+    Quantity: ${quantity}
+
+    Respond strictly in JSON:
+    {
+      "calories": number,
+      "protein": number,
+      "fat": number,
+      "fiber": number
+    }
+    `;
+
+    const aiData = await callYourAI(prompt);
+    const foodItem=await foodModel.create({
+        userId:req.user._id,
+        itemName:foodName,
+        calories:aiData.calories,
+        protein:aiData.protein,
+        fat:aiData.fat,
+        fiber:aiData.fiber
+    })
+    res.status(201).json({
+        message:"food item created",
+        foodItem
+    })
+
+  } catch (error) {
+    res.status(500).json({ message: "AI failed" });
+  }
+}
 module.exports = {
     createFoodItem,
     getFoodItems,
     getRecentFoodItems,
     addRecentItem,
-    getMonthlySummary
+    getMonthlySummary,
+    getAINutrition
 }

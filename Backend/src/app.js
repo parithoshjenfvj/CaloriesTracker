@@ -10,15 +10,7 @@ const getFoodRouts=require("./routes/getfood.today.route");
 const cors = require("cors");
 
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://calories-tracker-pp7v.vercel.app",
-    "https://calories-tracker-pp7v-2wbavn5l9-gudiparithosh-3198s-projects.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(cors());
 
 
 app.use(express.json());

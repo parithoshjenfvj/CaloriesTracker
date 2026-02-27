@@ -23,14 +23,14 @@ const CreateFoodItem = () => {
         try {
             // TODO: Add your API logic here
             // Example payload: { foodName: aiFoodName, quantity: aiQuantity }
-            const response=await fetch("https://caloriestracker-u1ca.onrender.com/user/get-ai-nutrition",{
-                method:"POST",
-                headers:{"Content-Type":"application/json"},
-                credentials:"include",
-                body:JSON.stringify({foodName:aiFoodName,quantity:aiQuantity})
+            const response = await fetch("https://caloriestracker-u1ca.onrender.com/user/get-ai-nutrition", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ foodName: aiFoodName, quantity: aiQuantity })
             })
-            const data=await response.json();
-            if(response.ok){
+            const data = await response.json();
+            if (response.ok) {
                 console.log(data.foodItem);
                 alert("added");
             }
@@ -45,7 +45,7 @@ const CreateFoodItem = () => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const response = await fetch("http://localhost:3000/user/create", {
+            const response = await fetch("https://caloriestracker-u1ca.onrender.com/user/create", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

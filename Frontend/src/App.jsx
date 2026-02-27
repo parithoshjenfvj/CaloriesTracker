@@ -9,6 +9,7 @@ import CalorieCalculator from "./pages/CalorieCalculator";
 import Home from "./pages/Home";
 import MonthlySummary from "./pages/MonthlySummary";
 import UploadImage from "./pages/UploadImage";
+import TodaysList from "./pages/TodaysList";
 function App() {
 
   return (
@@ -21,6 +22,7 @@ function App() {
       <Route path="/calorie-calculator" element={<CalorieCalculator />} />
       <Route path="/monthly-summary" element={<MonthlySummary />} />
       <Route path="/upload-image" element={<UploadImage />} />
+      <Route path="/todays-list" element={<TodaysList />} />
     </Routes>
   )
 }

@@ -11,7 +11,7 @@ const MonthlySummary = () => {
     useEffect(() => {
         const fetchMonthlySummary = async () => {
             try {
-                const response = await fetch('http://localhost:3000/user/monthly-summary', {
+                const response = await fetch('https://calories-backend.onrender.com/user/monthly-summary', {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include'

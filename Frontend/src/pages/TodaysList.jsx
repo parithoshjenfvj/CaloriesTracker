@@ -10,7 +10,7 @@ const TodaysList = () => {
 
     const fetchTodayItems = async () => {
         try {
-            const response = await fetch("http://localhost:3000/user/gettoday", {
+            const response = await fetch("https://calories-backend.onrender.com/user/gettoday", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include"
@@ -42,7 +42,7 @@ const TodaysList = () => {
     const handleDelete = async (id) => {
         setDeletingId(id);
         try {
-            const response = await fetch(`http://localhost:3000/user/delete/${id}`, {
+            const response = await fetch(`https://calories-backend.onrender.com/user/delete/${id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include"

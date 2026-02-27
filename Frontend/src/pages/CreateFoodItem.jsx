@@ -23,7 +23,7 @@ const CreateFoodItem = () => {
         try {
             // TODO: Add your API logic here
             // Example payload: { foodName: aiFoodName, quantity: aiQuantity }
-            const response=await fetch("http://localhost:3000/user/get-ai-nutrition",{
+            const response=await fetch("https://calories-backend.onrender.com/user/get-ai-nutrition",{
                 method:"POST",
                 headers:{"Content-Type":"application/json"},
                 credentials:"include",

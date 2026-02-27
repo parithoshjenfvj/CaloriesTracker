@@ -79,7 +79,7 @@ const UploadImage = () => {
             const formData = new FormData();
             formData.append("image", selectedFile);
 
-            const response = await fetch("http://localhost:3000/user/get-image-nutrition", {
+            const response = await fetch("https://calories-backend.onrender.com/user/get-image-nutrition", {
                 method: "POST",
                 credentials: "include",
                 body: formData,

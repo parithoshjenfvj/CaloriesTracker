@@ -23,7 +23,7 @@ const CalorieCalculator = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        const response = await fetch("http://localhost:3000/user/calorie-deficit", {
+        const response = await fetch("https://calories-backend.onrender.com/user/calorie-deficit", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

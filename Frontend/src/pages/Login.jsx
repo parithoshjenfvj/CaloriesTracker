@@ -13,7 +13,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "https://calories-backend.onrender.com/api/auth/user/login",
+        "https://caloriestracker-u1ca.onrender.com/api/auth/user/login",
         {
           method: "POST",
           credentials: "include",

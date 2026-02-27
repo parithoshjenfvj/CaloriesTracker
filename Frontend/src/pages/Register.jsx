@@ -14,7 +14,7 @@ const Register = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "https://calories-backend.onrender.com/api/auth/user/register",
+        "https://caloriestracker-u1ca.onrender.com/api/auth/user/register",
         {
           method: "POST",
           credentials: "include",

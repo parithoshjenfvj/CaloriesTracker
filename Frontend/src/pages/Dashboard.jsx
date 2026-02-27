@@ -22,7 +22,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchRecentItems = async () => {
       try {
-        const response = await fetch("https://calories-backend.onrender.com/user/recents", {
+        const response = await fetch("https://caloriestracker-u1ca.onrender.com/user/recents", {
           method: "GET",
           headers: { "content-type": "application/json" },
           credentials: "include"
@@ -37,7 +37,7 @@ const Dashboard = () => {
   }, []);
 
   const handleAddRecentItem = async (item) => {
-    const response = await fetch("https://calories-backend.onrender.com/user/add-recent/" + item._id, {
+    const response = await fetch("https://caloriestracker-u1ca.onrender.com/user/add-recent/" + item._id, {
       method: "POST",
       headers: { "content-type": "application/json" },
       credentials: "include"
@@ -60,7 +60,7 @@ const Dashboard = () => {
   };
 
   const handleLogout = async () => {
-    const response = await fetch("https://calories-backend.onrender.com/api/auth/user/logout", {
+    const response = await fetch("https://caloriestracker-u1ca.onrender.com/api/auth/user/logout", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" }
@@ -74,7 +74,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
-        const response = await fetch('https://calories-backend.onrender.com/user/dashboard', {
+        const response = await fetch('https://caloriestracker-u1ca.onrender.com/user/dashboard', {
           method: "GET",
           headers: { "Content-Type": "application/json" },
           credentials: "include"

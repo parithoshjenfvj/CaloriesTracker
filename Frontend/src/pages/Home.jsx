@@ -36,7 +36,7 @@ const Home = () => {
         }
         setFeedbackErrors({});
         try {
-            const res = await fetch('https://calories-backend.onrender.com/user/feedback', {
+            const res = await fetch('https://caloriestracker-u1ca.onrender.com/user/feedback', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
